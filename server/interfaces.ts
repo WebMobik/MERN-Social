@@ -1,19 +1,28 @@
 import { HashOptions } from 'crypto'
-import { Document, Query } from 'mongoose'
+import { Document } from 'mongoose'
 
 interface IProfile extends Document {
   hashed_password?: string | undefined
   salt?: HashOptions | undefined
   updated?: number
+  following?: string[]
+  photo?: {
+    contentType?: string
+    data?: string
+  }
 }
 
-export interface IUserQuery extends Document<any> {
-  _id?: string
+export interface IUserQuery<T = string> extends Document<any> {
+  _id?: T
+  userId?: T
   authenticate?: any
-  name?: string
-  email?: string
-  password?: string
-  hashed_password?: string | undefined
+  name?: T
+  email?: T
+  unfollowId?: T
+  followId?: T
+  followers?: T
+  password?: T
+  hashed_password?: T | undefined
   salt?: HashOptions | undefined
 }
 
