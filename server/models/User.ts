@@ -1,15 +1,7 @@
-import { model, Document, Schema } from 'mongoose'
-import crypto, { HashOptions } from 'crypto'
-
-interface IDocument<T> extends Document<T> {
-  encryptPassword: Function
-  hashed_password: string
-  salt: HashOptions
-}
-
-export interface IUserDoc extends Schema {
-  methods: { [name: string]: (this: IDocument<any>, ...args: any[]) => any }
-}
+import { model, Schema } from 'mongoose'
+import crypto from 'crypto'
+import { IUserDoc } from '../interfaces'
+import { ObjectId } from 'bson'
 
 const UserSchema: IUserDoc = new Schema({
   name: {
@@ -42,8 +34,8 @@ const UserSchema: IUserDoc = new Schema({
     data: Buffer,
     contentType: String,
   },
-  following: [{ type: String, ref: 'User' }],
-  followers: [{ type: String, ref: 'User' }],
+  following: [{ type: ObjectId, ref: 'User' }],
+  followers: [{ type: ObjectId, ref: 'User' }],
 })
 
 UserSchema.virtual('password')

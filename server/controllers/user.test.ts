@@ -35,29 +35,28 @@ describe('test to get users list', () => {
     await db.close()
   })
 
-  it('should insert a doc into collection', async () => {
+  it('should find a doc into collection', async () => {
     const findUser = await users.findOne({ name: 'Mobik' })
     expect(findUser.name).toEqual('Mobik')
   })
 
-  it('create and update user profile', async () => {
+  it('create and update doc', async () => {
     const user = new UserModel(TEST_USER)
     await users.insertOne(user)
 
     const findTestUser = await users.findOne({ name: TEST_USER.name })
     expect(findTestUser.name).toEqual(TEST_USER.name)
 
-    // userCtrl.update(
-    //   {
-    //     name: TEST_UPDATE.name,
-    //     email: TEST_USER.email,
-    //     password: TEST_UPDATE.password,
-    //     about: TEST_UPDATE.about,
-    //   },
-    //   connection
-    // )
+    const updateUser = await users.updateOne(
+      { name: TEST_USER.name },
+      { $set: TEST_UPDATE }
+    )
 
-    // const findUpdateUser = await users.findOne({ name: TEST_UPDATE.name })
-    // expect(findUpdateUser.name).toEqual(TEST_UPDATE.name)
+    expect(updateUser['matchedCount']).toEqual(1)
+  })
+
+  it('delete created doc', async () => {
+    const deleteUser = await users.deleteOne({ name: TEST_UPDATE.name })
+    expect(deleteUser['deletedCount']).toEqual(1)
   })
 })

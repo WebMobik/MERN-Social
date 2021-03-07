@@ -3,7 +3,7 @@ import extend from 'lodash/extend'
 import errorHandler from '../helpers/dbErrorHandler'
 import { IRequest } from '../interfaces'
 import { NextFunction, Response } from 'express'
-// import profileImage from '../../client/assets/images/profile-pic.png'
+import profileImage from '../../client/assets/images/profile-pic.png'
 import formidable from 'formidable'
 import fs from 'fs'
 
@@ -111,9 +111,9 @@ const photo = (req: IRequest, res: Response, next: NextFunction) => {
   next()
 }
 
-// const defaultPhoto = (req: IRequest, res: Response) => {
-//   return res.sendFile(process.cwd() + profileImage)
-// }
+const defaultPhoto = (req: IRequest, res: Response) => {
+  return res.sendFile(process.cwd() + profileImage)
+}
 
 const addFollowing = async (
   req: IRequest,
@@ -212,7 +212,7 @@ export default {
   update,
   remove,
   photo,
-  // defaultPhoto,
+  defaultPhoto,
   addFollowing,
   addFollower,
   removeFollowing,
