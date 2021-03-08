@@ -6,6 +6,7 @@ import compress from 'compression'
 import cors from 'cors'
 import helmet from 'helmet'
 
+import postRoutes from './routes/post.routes'
 import userRoutes from './routes/user.routes'
 import authRoutes from './routes/auth.routes'
 
@@ -34,6 +35,7 @@ app.use(cors())
 
 app.use('/dist', express.static(path.join(CURRENT_WORKING_DIR, 'dist')))
 
+app.use('/', postRoutes)
 app.use('/', userRoutes)
 app.use('/', authRoutes)
 
