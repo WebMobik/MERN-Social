@@ -1,9 +1,9 @@
-import { model, Schema } from 'mongoose'
 import crypto from 'crypto'
-import { IUserDoc } from '../interfaces'
-import { ObjectId } from 'bson'
+import { ObjectId } from 'mongodb'
+import { model, Schema } from 'mongoose'
+import { UserSchemaDoc } from '../types'
 
-const UserSchema: IUserDoc = new Schema({
+const UserSchema = new Schema<UserSchemaDoc>({
   name: {
     type: String,
     trim: true,
@@ -58,9 +58,6 @@ UserSchema.path('hashed_password').validate(function (v) {
 }, null)
 
 UserSchema.methods = {
-  authenticate: function (plainText) {
-    return this.encryptPassword(plainText) === this.hashed_password
-  },
   encryptPassword: function (password) {
     if (!password) return ''
     try {
@@ -69,9 +66,12 @@ UserSchema.methods = {
       return ''
     }
   },
+  authenticate: function (plainText) {
+    return this.encryptPassword(plainText) === this.hashed_password
+  },
   makeSalt: function () {
     return Math.round(new Date().valueOf() * Math.random()) + ''
   },
 }
 
-export default model('User', UserSchema)
+export default model<UserSchemaDoc>('User', UserSchema)

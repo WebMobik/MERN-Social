@@ -3,11 +3,12 @@ import jwt from 'jsonwebtoken'
 import expressJwt from 'express-jwt'
 import config from '../../config/config'
 import { NextFunction, Response } from 'express'
-import { IRequest, IUserQuery } from '../interfaces'
+import { IRequest, UserAuth } from '../types'
+import { HasAuthReq, UserAuthReq, UserAuthRes } from './types'
 
-const signin = async (req: IRequest, res: Response) => {
+const signin = async (req: IRequest<UserAuthReq>, res: Response<UserAuthRes>) => {
     try {
-        const user: IUserQuery = await UserModel.findOne({
+        const user: UserAuth = await UserModel.findOne({
             'email': req.body.email
         })
         
@@ -30,7 +31,7 @@ const signin = async (req: IRequest, res: Response) => {
             expires: new Date()
         })
         return res.json({
-            token: token,
+            token,
             user: {
                 _id: user._id,
                 name: user.name,
@@ -58,7 +59,7 @@ const requireSignin = expressJwt({
     algorithms: ['HS256'],
 })
 
-const hasAuthorization = (req: IRequest, res: Response, next: NextFunction) => {
+const hasAuthorization = (req: IRequest<HasAuthReq>, res: Response, next: NextFunction) => {
     const authorization = req.profile && req.auth && req.profile._id == req.auth._id
     if (!authorization) {
         return res.status(403).json({

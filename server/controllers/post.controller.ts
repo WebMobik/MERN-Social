@@ -1,21 +1,23 @@
-import PostModel from '../models/post'
-import errorHandler from './../helpers/dbErrorHandler'
+import { NextFunction, Response } from 'express'
+import { LeanDocument } from 'mongoose'
 import formidable from 'formidable'
 import fs from 'fs'
-import { NextFunction, Response } from 'express'
-import { IRequest, PostDoc } from '../interfaces'
+import { IncomingMessage } from 'http'
+import PostModel from '../models/post'
+import errorHandler from '../helpers/dbErrorHandler'
+import { IRequest, PostSchemaDoc, ErrorRes, UserProfile, PostComment, PostLike } from '../types'
 
-const create = (req, res: Response) => {
+const create = (req: IRequest | IncomingMessage, res: Response<PostSchemaDoc | ErrorRes>) => {
   const form = new formidable.IncomingForm()
   form.keepExtensions = true
-  form.parse(req, async (err, fields, files) => {
+  form.parse(req as IncomingMessage, async (err, fields, files) => {
     if (err) {
       return res.status(400).json({
         error: 'Photo could not be uploaded',
       })
     }
-    const post: PostDoc = new PostModel(fields)
-    post.postedBy = req.profile
+    const post: PostSchemaDoc = new PostModel(fields)
+    post.postedBy = (req as IRequest).profile
     if (files.photo) {
       post.photo.data = fs.readFileSync(files.photo['path'])
       post.photo.contentType = files.photo['type']
@@ -31,12 +33,7 @@ const create = (req, res: Response) => {
   })
 }
 
-const postById = async (
-  req: IRequest,
-  res: Response,
-  next: NextFunction,
-  id: string
-) => {
+const postById = async (req: IRequest, res: Response, next: NextFunction, id: string) => {
   try {
     const post = await PostModel.findById(id)
       .populate('postedBy', '_id name')
@@ -54,7 +51,7 @@ const postById = async (
   }
 }
 
-const listByUser = async (req: IRequest, res: Response) => {
+const listByUser = async (req: IRequest, res: Response<PostSchemaDoc[] | ErrorRes>) => {
   try {
     const posts = await PostModel.find({ postedBy: req.profile.id })
       .populate('comments.postedBy', '_id name')
@@ -69,10 +66,10 @@ const listByUser = async (req: IRequest, res: Response) => {
   }
 }
 
-const listNewsFeed = async (req: IRequest, res: Response) => {
+const listNewsFeed = async (req: IRequest, res: Response<PostSchemaDoc[] | ErrorRes>) => {
   try {
     const posts = await PostModel.find({
-      postedBy: { $in: req.profile.following },
+      postedBy: { $in: req.profile.following as LeanDocument<UserProfile>[] },
     })
       .populate('comments.postedBy', '_id name')
       .populate('postedBy', '_id name')
@@ -86,7 +83,7 @@ const listNewsFeed = async (req: IRequest, res: Response) => {
   }
 }
 
-const remove = async (req: IRequest, res: Response) => {
+const remove = async (req: IRequest, res: Response<PostSchemaDoc | ErrorRes>) => {
   const post = req.post
   try {
     const deletePost = await post.remove()
@@ -98,13 +95,13 @@ const remove = async (req: IRequest, res: Response) => {
   }
 }
 
-const photo = (req: IRequest, res: Response) => {
+const photo = (req: IRequest, res: Response<Buffer>) => {
   const reqPhoto = req.post.photo
   res.set('Content-Type', reqPhoto.contentType)
   return res.json(reqPhoto.data)
 }
 
-const like = async (req: IRequest, res: Response) => {
+const like = async (req: IRequest<PostLike>, res: Response<PostSchemaDoc | ErrorRes>) => {
   try {
     const result = await PostModel.findByIdAndUpdate(
       req.body.postId,
@@ -119,7 +116,7 @@ const like = async (req: IRequest, res: Response) => {
   }
 }
 
-const unlike = async (req: IRequest, res: Response) => {
+const unlike = async (req: IRequest<PostLike>, res: Response<PostSchemaDoc | ErrorRes>) => {
   try {
     const result = await PostModel.findByIdAndUpdate(
       req.body.postId,
@@ -134,13 +131,13 @@ const unlike = async (req: IRequest, res: Response) => {
   }
 }
 
-const comment = async (req: IRequest, res: Response) => {
+const comment = async (req: IRequest<PostComment>, res: Response<PostSchemaDoc | ErrorRes>) => {
   const comment = req.body.comment
   comment.postedBy = req.body.userId
   try {
     const result = await PostModel.findByIdAndUpdate(
       req.body.postId,
-      { $push: { comments: comment } },
+      { $push: { comments: comment as never } },
       { new: true }
     )
       .populate('comments.postedBy', '_id name')
@@ -154,12 +151,12 @@ const comment = async (req: IRequest, res: Response) => {
   }
 }
 
-const uncomment = async (req: IRequest, res: Response) => {
+const uncomment = async (req: IRequest<PostComment>, res: Response<PostSchemaDoc | ErrorRes>) => {
   const comment = req.body.comment
   try {
     const result = await PostModel.findByIdAndUpdate(
       req.body.postId,
-      { $pull: { comments: { _id: comment._id } } },
+      { $pull: { comments: { _id: comment._id } } as { comments: never } },
       { new: true }
     )
       .populate('comments.postedBy', '_id name')

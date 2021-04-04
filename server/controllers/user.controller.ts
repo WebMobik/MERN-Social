@@ -1,13 +1,17 @@
-import UserModel from '../models/User'
-import extend from 'lodash/extend'
-import errorHandler from '../helpers/dbErrorHandler'
-import { IRequest } from '../interfaces'
 import { NextFunction, Response } from 'express'
-import profileImage from '../../client/assets/images/profile-pic.png'
-import formidable from 'formidable'
 import fs from 'fs'
+import extend from 'lodash/extend'
+import formidable from 'formidable'
+import { Document } from 'mongoose'
+import { IncomingMessage } from 'http'
+import UserModel from '../models/User'
+import errorHandler from '../helpers/dbErrorHandler'
+import { IRequest, UserProfile, ErrorRes } from '../types'
+import { Unfollow, Follow, CreateUserReq, UsersList } from './types'
 
-const create = async (req: IRequest, res: Response) => {
+import profileImage from '../../client/assets/images/profile-pic.png'
+
+const create = async (req: IRequest<CreateUserReq>, res: Response) => {
   const user = new UserModel(req.body)
 
   try {
@@ -22,12 +26,7 @@ const create = async (req: IRequest, res: Response) => {
   }
 }
 
-const userById = async (
-  req: IRequest,
-  res: Response,
-  next: NextFunction,
-  id: string
-) => {
+const userById = async (req: IRequest, res: Response, next: NextFunction, id: string) => {
   try {
     const user = await UserModel.findById(id)
     if (!user) {
@@ -44,16 +43,16 @@ const userById = async (
   }
 }
 
-const read = (req: IRequest, res: Response) => {
+const read = (req: IRequest, res: Response<UserProfile>) => {
   req.profile.hashed_password = undefined
   req.profile.salt = undefined
   return res.json(req.profile)
 }
 
-const list = async (req?: IRequest, res?: Response) => {
+const list = async (req: IRequest, res: Response<Document<UsersList>[] | ErrorRes>) => {
   try {
     const users = await UserModel.find().select('name email updated created')
-    res.json(users)
+    return res.json(users)
   } catch (err) {
     return res.status(400).json({
       error: errorHandler.getErrorMessage(err),
@@ -61,16 +60,16 @@ const list = async (req?: IRequest, res?: Response) => {
   }
 }
 
-const update = async (req, res: Response) => {
+const update = async (req: IRequest | IncomingMessage, res: Response<UserProfile | ErrorRes>) => {
   const form = new formidable.IncomingForm()
   form.keepExtensions = true
-  form.parse(req, async (err, fields, files) => {
+  form.parse(req as IncomingMessage, async (err, fields, files) => {
     if (err) {
       return res.status(400).json({
         error: 'Photo could not be uploaded',
       })
     }
-    const user = extend(req.profile, fields)
+    const user = extend((req as IRequest).profile, fields)
     user.updated = Date.now()
     if (files.photo) {
       user.photo.data = fs.readFileSync(files.photo['path'])
@@ -89,13 +88,13 @@ const update = async (req, res: Response) => {
   })
 }
 
-const remove = async (req: IRequest, res: Response) => {
+const remove = async (req: IRequest, res: Response<UserProfile | ErrorRes>) => {
   try {
     const user = req.profile
     const deleteUser = await user.remove()
     deleteUser.hashed_password = undefined
     deleteUser.salt = undefined
-    res.json(deleteUser)
+    return res.json(deleteUser)
   } catch (err) {
     return err.status(400).json({
       error: errorHandler.getErrorMessage(err),
@@ -115,11 +114,7 @@ const defaultPhoto = (req: IRequest, res: Response) => {
   return res.sendFile(process.cwd() + profileImage)
 }
 
-const addFollowing = async (
-  req: IRequest,
-  res: Response,
-  next: NextFunction
-) => {
+const addFollowing = async (req: IRequest<Follow>, res: Response, next: NextFunction) => {
   try {
     await UserModel.findByIdAndUpdate(req.body.userId, {
       $push: { following: req.body.followId },
@@ -132,10 +127,10 @@ const addFollowing = async (
   }
 }
 
-const addFollower = async (req: IRequest, res: Response) => {
+const addFollower = async (req: IRequest<Follow>, res: Response) => {
   try {
     const res: any = await UserModel.findByIdAndUpdate(
-      req.body.userId,
+      req.body.followId,
       { $push: { followers: req.body.userId } },
       { new: true }
     )
@@ -152,11 +147,7 @@ const addFollower = async (req: IRequest, res: Response) => {
   }
 }
 
-const removeFollowing = async (
-  req: IRequest,
-  res: Response,
-  next: NextFunction
-) => {
+const removeFollowing = async (req: IRequest<Unfollow>, res: Response, next: NextFunction) => {
   try {
     await UserModel.findByIdAndUpdate(req.body.userId, {
       $pull: { following: req.body.unfollowId },
@@ -169,7 +160,7 @@ const removeFollowing = async (
   }
 }
 
-const removeFollower = async (req: IRequest, res: Response) => {
+const removeFollower = async (req: IRequest<Unfollow>, res: Response) => {
   try {
     const res: any = await UserModel.findByIdAndUpdate(
       req.body.unfollowId,
@@ -189,7 +180,7 @@ const removeFollower = async (req: IRequest, res: Response) => {
   }
 }
 
-const findPeople = async (req: IRequest, res: Response) => {
+const findPeople = async (req: IRequest, res: Response<Document<{ name: string }>[] | ErrorRes>) => {
   const following = req.profile.following
   following.push(req.profile._id)
   try {

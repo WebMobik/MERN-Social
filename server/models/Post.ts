@@ -1,8 +1,8 @@
-import { ObjectId } from 'bson'
+import { ObjectId } from 'mongodb'
 import { model, Schema } from 'mongoose'
-import { PostDoc } from '../interfaces'
+import { PostSchemaDoc } from '../types'
 
-const PostSchema = new Schema({
+const PostSchema = new Schema<PostSchemaDoc>({
   text: {
     type: String,
     required: 'Text is required',
@@ -23,4 +23,4 @@ const PostSchema = new Schema({
   created: { type: Date, default: Date.now },
 })
 
-export default model('Post', PostSchema)
+export default model<PostSchemaDoc>('Post', PostSchema)

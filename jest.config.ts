@@ -1,12 +1,4 @@
 import type { Config } from '@jest/types'
-// const config: Config.InitialOptions = {
-//     verbose: true,
-//     moduleFileExtensions: ["ts", "tsx"],
-//     moduleDirectories: ["node_modules", "server", "client"],
-//     transform: {"\\.[jt]sx?$": "babel-jest"}
-// };
-
-// export default config;
 
 export default async (): Promise<Config.InitialOptions> => {
   return {
