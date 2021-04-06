@@ -1,21 +1,10 @@
-const headers = (credentials?) => {
-  const basicHeaders = {
-    Accept: 'application/json',
-    'Content-Type': 'application/json',
-  }
-
-  if (credentials) {
-    return { ...basicHeaders, Authorization: 'Bearer ' + credentials.t }
-  }
-
-  return basicHeaders
-}
+import { headersApi } from "../helpers"
 
 const create = async (user) => {
   try {
     const response = await fetch('/api/users/', {
       method: 'POST',
-      headers: headers(),
+      headers: headersApi(),
       body: JSON.stringify(user),
     })
     return await response.json()
@@ -24,7 +13,7 @@ const create = async (user) => {
   }
 }
 
-const list = async (signal) => {
+const list = async (signal: AbortSignal) => {
   try {
     const response = await fetch('/api/users/', {
       method: 'GET',
@@ -40,7 +29,7 @@ const update = async (params, credentials, user) => {
   try {
     const response = await fetch('/api/users/' + params.userId, {
       method: 'PUT',
-      headers: headers(credentials),
+      headers: headersApi(credentials),
       body: JSON.stringify(user),
     })
     return await response.json()
@@ -49,12 +38,12 @@ const update = async (params, credentials, user) => {
   }
 }
 
-const read = async (params, credentials, signal) => {
+const read = async (params: {userId: string}, credentials, signal: AbortSignal) => {
   try {
     const response = await fetch('/api/users/' + params.userId, {
       method: 'GET',
       signal,
-      headers: headers(credentials),
+      headers: headersApi(credentials),
     })
     return await response.json()
   } catch (err) {
@@ -66,7 +55,7 @@ const remove = async (params, credentials) => {
   try {
     const response = await fetch('/api/users/' + params.userId, {
       method: 'DELETE',
-      headers: headers(credentials),
+      headers: headersApi(credentials),
     })
     return await response.json()
   } catch (err) {
