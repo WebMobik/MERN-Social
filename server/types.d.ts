@@ -12,8 +12,7 @@ export interface IRequest<T = unknown> {
 
 export type ErrorRes = { error: string }
 
-export type UserProfile = Document & {
-  _id?: ObjectId
+export type UserProfile = Document<ObjectId> & {
   name?: string
   email?: string
   about?: string
@@ -61,7 +60,7 @@ export type PostSchemaDoc = Document & {
     text: string
     created: Date
     postedBy: ObjectId
-  }
+  }[]
   postedBy: UserProfile
   created: Date
   photo?: {

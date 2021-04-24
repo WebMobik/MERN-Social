@@ -13,7 +13,6 @@ import {
   ListItemAvatar,
   ListItemSecondaryAction,
   ListItemText,
-  Paper,
   Typography,
 } from '@material-ui/core'
 import { Person, Edit } from '@material-ui/icons'

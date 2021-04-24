@@ -2,12 +2,11 @@ import { NextFunction, Response } from 'express'
 import fs from 'fs'
 import extend from 'lodash/extend'
 import formidable from 'formidable'
-import { Document } from 'mongoose'
 import { IncomingMessage } from 'http'
 import UserModel from '../models/User'
 import errorHandler from '../helpers/dbErrorHandler'
-import { IRequest, UserProfile, ErrorRes } from '../types'
-import { Unfollow, Follow, CreateUserReq, UsersList } from './types'
+import { IRequest, UserProfile, ErrorRes, UserSchemaDoc } from '../types'
+import { Unfollow, Follow, CreateUserReq } from './types'
 
 import profileImage from '../../client/assets/images/profile-pic.png'
 
@@ -49,7 +48,7 @@ const read = (req: IRequest, res: Response<UserProfile>) => {
   return res.json(req.profile)
 }
 
-const list = async (req: IRequest, res: Response<Document<UsersList>[] | ErrorRes>) => {
+const list = async (req: IRequest, res: Response<UserSchemaDoc[] | ErrorRes>) => {
   try {
     const users = await UserModel.find().select('name email updated created')
     return res.json(users)
@@ -60,7 +59,7 @@ const list = async (req: IRequest, res: Response<Document<UsersList>[] | ErrorRe
   }
 }
 
-const update = async (req: IRequest | IncomingMessage, res: Response<UserProfile | ErrorRes>) => {
+const update = async (req: IRequest<any> | IncomingMessage, res: Response<UserProfile | ErrorRes>) => {
   const form = new formidable.IncomingForm()
   form.keepExtensions = true
   form.parse(req as IncomingMessage, async (err, fields, files) => {
@@ -180,7 +179,7 @@ const removeFollower = async (req: IRequest<Unfollow>, res: Response) => {
   }
 }
 
-const findPeople = async (req: IRequest, res: Response<Document<{ name: string }>[] | ErrorRes>) => {
+const findPeople = async (req: IRequest, res: Response<UserSchemaDoc[] | ErrorRes>) => {
   const following = req.profile.following
   following.push(req.profile._id)
   try {

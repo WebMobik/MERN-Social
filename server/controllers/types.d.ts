@@ -14,7 +14,7 @@ export type UserAuthReq = {
 export type UserAuthRes = {
     token?: string
     user?: {
-      _id: string
+      _id: ObjectId
       name: string
       email: string
     }
@@ -23,10 +23,10 @@ export type UserAuthRes = {
 
 export type HasAuthReq = {
     profile: {
-        _id: string
+        _id: ObjectId
     }
     auth: {
-        _id: string
+        _id: ObjectId
     }
 }
 

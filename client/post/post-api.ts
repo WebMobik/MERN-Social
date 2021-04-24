@@ -39,12 +39,12 @@ const listNewsFeed = async (params, credentials, signal: AbortSignal) => {
     }
 }
 
-const like = async (like) => {
+const like = async (params, credentials, postId) => {
     try {
         const response = await fetch('/api/posts/like', {
             method: 'PUT',
-            headers: headersApi(),
-            body: JSON.stringify(like),
+            headers: headersApi(credentials),
+            body: JSON.stringify({userId: params.userId, postId}),
         })
         return await response.json()
     } catch (err) {
