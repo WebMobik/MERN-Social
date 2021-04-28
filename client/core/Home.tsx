@@ -23,11 +23,7 @@ const Home: React.FC = () => {
             <Typography className={styles.title}>
                 Home Page
             </Typography>
-            <CardContent>
-                <Typography>
-                    Welcome to MERN Social app on TypeScript 
-                </Typography>
-            </CardContent>
+            
         </Card>
     )
 }

@@ -12,8 +12,6 @@ import {
   ListItemAvatar,
   ListItemSecondaryAction,
   ListItemText,
-  makeStyles,
-  Paper,
   Typography,
 } from '@material-ui/core'
 import { Person, ArrowForward } from '@material-ui/icons'

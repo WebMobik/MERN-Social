@@ -1,9 +1,20 @@
 import React from 'react'
-import Enzyme, {shallow} from 'enzyme';
-import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
+import {fireEvent, render, screen, waitFor} from '@testing-library/react'
+import {act} from 'react-dom/test-utils'
+import '@testing-library/jest-dom';
 import Signin from './Signin'
 
-Enzyme.configure({ adapter: new Adapter() });
+const mockThen = jest.fn()
+
+jest.mock('./api-auth', () => ({
+    signin: () => ({
+        then: mockThen
+    })
+}))
+
+jest.mock('./auth-helper', () => ({
+    authenticate: jest.fn()
+}))
 
 const TEST_INPUT_DATA = {
     EMAIL: 'test@mail.ru',
@@ -11,16 +22,29 @@ const TEST_INPUT_DATA = {
 }
 
 describe('<Signin /> test', () => {
-    const Component = shallow(<Signin />)
+    const Component = () => render(<Signin />)
 
     it('should be mount snap', () => {
-        expect(Component.html()).toMatchSnapshot()
+        expect(Component()).toMatchSnapshot()
     })
 
-    it('input form data', () => {
-        const Inputs = Component.find('TextField')
-        Inputs.at(0).simulate('change', { target: { value: TEST_INPUT_DATA.EMAIL } })
-        Inputs.at(1).simulate('change', { target: { value: TEST_INPUT_DATA.PASSWORD } })
-        expect(Inputs.at(0).props().onChange).toBeCalledTimes(1)
+    it('input form data', async () => {
+        Component()
+        const EmailInput = screen.getByPlaceholderText('Email')
+        const PasswordInput = screen.getByPlaceholderText('Password')
+        act(() => {
+            fireEvent.change(EmailInput, { target: { value: TEST_INPUT_DATA.EMAIL } })
+        })
+        act(() => {
+            fireEvent.change(PasswordInput, { target: { value: TEST_INPUT_DATA.PASSWORD } })
+        })
+        expect(screen.getByDisplayValue(TEST_INPUT_DATA.EMAIL)).toBeTruthy()
+        expect(screen.getByDisplayValue(TEST_INPUT_DATA.PASSWORD)).toBeTruthy()
+
+        act(() => {
+            fireEvent.click(screen.getByText('Submit'))
+        })
+
+        await waitFor(() => expect(mockThen).toBeCalledTimes(1))
     })
 })

@@ -128,7 +128,7 @@ const addFollowing = async (req: IRequest<Follow>, res: Response, next: NextFunc
 
 const addFollower = async (req: IRequest<Follow>, res: Response) => {
   try {
-    const res: any = await UserModel.findByIdAndUpdate(
+    const updatedUser = await UserModel.findByIdAndUpdate(
       req.body.followId,
       { $push: { followers: req.body.userId } },
       { new: true }
@@ -136,9 +136,9 @@ const addFollower = async (req: IRequest<Follow>, res: Response) => {
       .populate('following', '_id name')
       .populate('followers', '_id name')
       .exec()
-    res.hashed_password = undefined
-    res.salt = undefined
-    res.json(res)
+    updatedUser.hashed_password = undefined
+    updatedUser.salt = undefined
+    res.json(updatedUser)
   } catch (err) {
     return res.status(400).json({
       error: errorHandler.getErrorMessage(err),

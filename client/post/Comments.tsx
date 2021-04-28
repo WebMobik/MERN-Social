@@ -1,6 +1,13 @@
 import React from 'react'
+import { PostSchemaDoc } from '../../server/types';
 
-const Comments: React.FC = () => {
+type CommentsProps = {
+    postId: string,
+    comments: PostSchemaDoc['comments'],
+    updateComments: (comments: PostSchemaDoc['comments']) => void
+}
+
+const Comments: React.FC<CommentsProps> = () => {
     return (
         <div>
 

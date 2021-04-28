@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { ChangeEvent, MouseEventHandler, useState } from 'react'
 import { Redirect } from 'react-router-dom'
 import auth from './auth-helper'
 import { signin } from './api-auth'
@@ -21,12 +21,13 @@ const SignIn: React.FC = () => {
     redirectToRefresh: false,
   })
 
-  const handlerSubmit = (e) => {
+  const handlerSubmit: MouseEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault()
     const user = {
       email: values.email || undefined,
       password: values.password || undefined,
     }
+    
     signin(user).then((data) => {
       if (data.error) {
         setValues({ ...values, error: data.error })
@@ -38,7 +39,7 @@ const SignIn: React.FC = () => {
     })
   }
 
-  const handlerChange = (name) => (event) => {
+  const handlerChange = (name: string) => (event: ChangeEvent<{ value: string }>) => {
     setValues({ ...values, [name]: event.target.value })
   }
 
@@ -53,6 +54,7 @@ const SignIn: React.FC = () => {
             label="Email"
             value={values.email}
             onChange={handlerChange('email')}
+            placeholder="Email"
             margin="normal"
           />
           <TextField
@@ -61,6 +63,7 @@ const SignIn: React.FC = () => {
             label="Password"
             value={values.password}
             onChange={handlerChange('password')}
+            placeholder="Password"
             margin="normal"
           />
           <CardActions>

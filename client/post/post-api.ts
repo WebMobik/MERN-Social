@@ -1,5 +1,19 @@
 import { headersApi } from "../helpers"
 
+const create = async (params, credentials, signal: AbortSignal) => {
+    try {
+        const response = await fetch('/api/posts/new/' + params.userId, {
+            method: 'POST',
+            body: JSON.stringify(params.post),
+            signal,
+            headers: headersApi(credentials),
+        })
+        return await response.json()
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 const photo = async (params, credentials, signal: AbortSignal) => {
     try {
         const response = await fetch('/api/posts/photo/' + params.postId, {
@@ -104,6 +118,7 @@ const remove = async (params, credentials) => {
 }
 
 export {
+    create,
     photo,
     listByUser,
     listNewsFeed,

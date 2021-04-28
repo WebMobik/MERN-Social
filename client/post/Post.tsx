@@ -1,7 +1,5 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom';
-import { PostSchemaDoc, ErrorRes } from '../../server/types';
-import auth from '../auth/auth-helper';
 import {
     Avatar,
     Card,
@@ -17,8 +15,10 @@ import DeleteIcon from '@material-ui/icons/Delete'
 import FavoriteIcon from '@material-ui/icons/Favorite'
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder'
 import CommentIcon from '@material-ui/icons/Comment'
-import Comments from './Comments';
 import { like, remove, unlike } from './post-api';
+import auth from '../auth/auth-helper';
+import Comments from './Comments';
+import { PostSchemaDoc, ErrorRes } from '../../server/types';
 
 const useStyles = makeStyles(theme => ({
     card: {
@@ -51,7 +51,7 @@ const useStyles = makeStyles(theme => ({
     }
 }))
 
-const Post: React.FC<{ post: PostSchemaDoc }> = ({ post, onRemove }) => {
+const Post: React.FC<{ post: PostSchemaDoc, onRemove: (post: PostSchemaDoc) => void }> = ({ post, onRemove }) => {
     const classes = useStyles()
     const jwt = auth.isAuthenticated()
     const checkLike = (likes) => likes.indexOf(jwt.user._id) !== -1
@@ -125,20 +125,22 @@ const Post: React.FC<{ post: PostSchemaDoc }> = ({ post, onRemove }) => {
                 )}
             </CardContent>
             <CardActions>
-          { values.like
-            ? (<IconButton onClick={clickLike} className={classes.button} aria-label="Like" color="secondary">
-                <FavoriteIcon />
-              </IconButton>)
-            : (<IconButton onClick={clickLike} className={classes.button} aria-label="Unlike" color="secondary">
-                <FavoriteBorderIcon />
-              </IconButton> )}
-              <span>{values.likes}</span>
-              <IconButton className={classes.button} aria-label="Comment" color="secondary">
-                <CommentIcon/>
-              </IconButton> <span>{values.comments.length}</span>
-        </CardActions>
-        <Divider/>
-        <Comments postId={post._id} comments={values.comments} updateComments={updateComments}/>
+                {values.like ? (
+                    <IconButton onClick={clickLike} className={classes.button} aria-label="Like" color="secondary">
+                        <FavoriteIcon />
+                    </IconButton>
+                    ) : (
+                    <IconButton onClick={clickLike} className={classes.button} aria-label="Unlike" color="secondary">
+                        <FavoriteBorderIcon />
+                    </IconButton>
+                )}
+                <span>{values.likes}</span>
+                <IconButton className={classes.button} aria-label="Comment" color="secondary">
+                    <CommentIcon/>
+                </IconButton> <span>{values.comments.length}</span>
+            </CardActions>
+            <Divider/>
+            <Comments postId={post._id} comments={values.comments} updateComments={updateComments}/>
         </Card>
     )
 };

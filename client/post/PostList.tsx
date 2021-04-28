@@ -1,16 +1,15 @@
-import { Avatar, Card, CardHeader } from '@material-ui/core';
-import { PostSchemaDoc } from '../../server/types';
 import React from 'react'
+import { Paper } from '@material-ui/core';
+import Post from './Post';
+import { PostSchemaDoc } from '../../server/types';
 
-const PostList: React.FC<{ post: PostSchemaDoc }> = ({ post }) => {
+const PostList: React.FC<{ posts: PostSchemaDoc[] }> = ({ posts }) => {
     return (
-        <Card>
-            <CardHeader
-                avatar={
-                    <Avatar src={'/api/users/photo'+post.postedBy._id} />
-                }
-            />
-        </Card>
+        <Paper elevation={3}>
+            {posts.map((post, index) => (
+                <Post key={index} post={post} onRemove={() => ({})} />
+            ))}
+        </Paper>
     )
 };
 
