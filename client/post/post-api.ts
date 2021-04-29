@@ -1,12 +1,14 @@
 import { headersApi } from "../helpers"
 
-const create = async (params, credentials, signal: AbortSignal) => {
+const create = async (params, credentials, post: FormData) => {
     try {
         const response = await fetch('/api/posts/new/' + params.userId, {
             method: 'POST',
-            body: JSON.stringify(params.post),
-            signal,
-            headers: headersApi(credentials),
+            headers: {
+                Accept: 'application/json',
+                Authorization: 'Bearer ' + credentials.t
+            },
+            body: post,
         })
         return await response.json()
     } catch (error) {

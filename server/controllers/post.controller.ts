@@ -8,8 +8,9 @@ import errorHandler from '../helpers/dbErrorHandler'
 import { IRequest, PostSchemaDoc, ErrorRes, UserProfile, PostComment, PostLike } from '../types'
 
 const create = (req: IRequest | IncomingMessage, res: Response<PostSchemaDoc | ErrorRes>) => {
-  const form = new formidable.IncomingForm() // TODO: заменить на formidable({ multiples: true, keepExtensions: true }) и проверить
+  const form = new formidable.IncomingForm()
   form.keepExtensions = true
+  form.multiples = true
   form.parse(req as IncomingMessage, async (err, fields, files) => {
     if (err) {
       return res.status(400).json({
