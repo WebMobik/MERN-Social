@@ -98,16 +98,16 @@ const Post: React.FC<{ post: PostSchemaDoc, onRemove: (post: PostSchemaDoc) => v
         <Card>
             <CardHeader
                 avatar={
-                    <Avatar src={'/api/users/photo'+post.postedBy._id} />
+                    <Avatar src={'/api/users/photo'+post.postedBy} />
                 }
                 action={
-                    post.postedBy._id === auth.isAuthenticated().user._id && (
+                    post.postedBy === auth.isAuthenticated().user._id && (
                         <IconButton onClick={deletePost}>
                             <DeleteIcon />
                         </IconButton>
                     )
                 }
-                title={<Link to={"/user/"+post.postedBy._id}>{post.postedBy.name}</Link>}
+                // title={<Link to={"/user/"+post.postedBy}>{post.postedBy.name}</Link>} // TODO: разобрать postedBy и вытащить имя пользователя создавшего пост
                 subheader={(new Date(post.created).toDateString())}
                 className={classes.cardHeader}
             />

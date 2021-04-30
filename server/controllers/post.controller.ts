@@ -5,7 +5,7 @@ import fs from 'fs'
 import { IncomingMessage } from 'http'
 import PostModel from '../models/post'
 import errorHandler from '../helpers/dbErrorHandler'
-import { IRequest, PostSchemaDoc, ErrorRes, UserProfile, PostComment, PostLike } from '../types'
+import { IRequest, PostSchemaDoc, ErrorRes, PostComment, PostLike } from '../types'
 
 const create = (req: IRequest | IncomingMessage, res: Response<PostSchemaDoc | ErrorRes>) => {
   const form = new formidable.IncomingForm()
@@ -18,7 +18,7 @@ const create = (req: IRequest | IncomingMessage, res: Response<PostSchemaDoc | E
       })
     }
     const post: PostSchemaDoc = new PostModel(fields)
-    post.postedBy = (req as IRequest).profile
+    post.postedBy = (req as IRequest).profile._id
     if (files.photo) {
       post.photo.data = fs.readFileSync(files.photo['path'])
       post.photo.contentType = files.photo['type']
@@ -54,7 +54,7 @@ const postById = async (req: IRequest, res: Response, next: NextFunction, id: st
 
 const listByUser = async (req: IRequest, res: Response<PostSchemaDoc[] | ErrorRes>) => {
   try {
-    const posts = await PostModel.find({ postedBy: req.profile.id })
+    const posts = await PostModel.find({ postedBy: req.profile._id })
       .populate('comments.postedBy', '_id name')
       .populate('postedBy', '_id name')
       .sort('-created')
@@ -70,7 +70,7 @@ const listByUser = async (req: IRequest, res: Response<PostSchemaDoc[] | ErrorRe
 const listNewsFeed = async (req: IRequest, res: Response<PostSchemaDoc[] | ErrorRes>) => {
   try {
     const posts = await PostModel.find({
-      postedBy: { $in: req.profile.following as LeanDocument<UserProfile>[] },
+      postedBy: { $in: req.profile.following },
     })
       .populate('comments.postedBy', '_id name')
       .populate('postedBy', '_id name')
@@ -172,7 +172,7 @@ const uncomment = async (req: IRequest<PostComment>, res: Response<PostSchemaDoc
 }
 
 const isPoster = (req: IRequest, res: Response, next: NextFunction) => {
-  const isPoster = req.post && req.post.postedBy._id === req.auth._id
+  const isPoster = req.post && req.post.postedBy === req.auth._id
   if (!isPoster) {
     return res.status(403).json({
       error: 'User is not authorized',

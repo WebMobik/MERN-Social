@@ -61,7 +61,7 @@ export type PostSchemaDoc = Document & {
     created: Date
     postedBy: ObjectId
   }[]
-  postedBy: UserProfile
+  postedBy: ObjectId
   created: Date
   photo?: {
     data: Buffer

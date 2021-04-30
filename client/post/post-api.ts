@@ -81,12 +81,12 @@ const unlike = async (unlike) => {
     }
 }
 
-const comment = async (comment) => {
+const comment = async (params, credentials, postId, comment) => {
     try {
         const response = await fetch('/api/posts/comment', {
             method: 'PUT',
-            headers: headersApi(),
-            body: JSON.stringify(comment),
+            headers: headersApi(credentials),
+            body: JSON.stringify({userId: params.userId, postId, comment}),
         })
         return await response.json()
     } catch (err) {
