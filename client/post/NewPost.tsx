@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { ChangeEvent, ChangeEventHandler, useEffect, useState } from 'react'
 import { Avatar, Button, Card, CardActions, CardContent, CardHeader, Icon, IconButton, makeStyles, TextField, Typography } from '@material-ui/core';
 import auth from '../auth/auth-helper';
 import { create } from './post-api';
@@ -30,7 +30,7 @@ const useStyles = makeStyles(theme => ({
         marginBottom: 5
     },
     input: {
-        play: 'none',
+        display: 'none',
     },
     textField: {
         marginLeft: theme.spacing(2),
@@ -94,7 +94,7 @@ const NewPost: React.FC = () => { // { addUpdate }
             })
     }
 
-    const handleChange = name => event => {
+    const handleChange = (name: string) => (event: ChangeEvent<HTMLInputElement>) => {
         const value = name === 'photo'
             ? event.target.files[0]
             : event.target.value
@@ -104,38 +104,51 @@ const NewPost: React.FC = () => { // { addUpdate }
     return (
         <div className={classes.root}>
             <Card className={classes.card}>
-            <CardHeader
-                avatar={
-                    <Avatar src={photoUrl}/>
-                }
-                title={values.user?.name || ''}
-                className={classes.cardHeader}
-            />
-            <CardContent className={classes.cardContent}>
-                <TextField
-                    placeholder="Share your thoughts ..."
-                    multiline
-                    rows="3"
-                    value={values.text}
-                    onChange={handleChange('text')}
-                    className={classes.textField}
-                    margin="normal"
+                <CardHeader
+                    avatar={<Avatar src={photoUrl}/>}
+                    title={values.user?.name || ''}
+                    className={classes.cardHeader}
                 />
-                <input accept="image/*" onChange={handleChange('photo')} className={classes.input} id="icon-button-file" type="file" />
-                <label htmlFor="icon-button-file">
-                <IconButton color="secondary" className={classes.photoButton} component="span">
-                    <PhotoCamera />
-                </IconButton>
-                </label> <span className={classes.filename}>{values.photo ? values.photo['name'] : ''}</span>
-                { values.error && (<Typography component="p" color="error">
-                    <Icon color="error">error</Icon>
-                    {values.error}
-                    </Typography>)
-                }
-            </CardContent>
-            <CardActions>
-                <Button color="primary" variant="contained" disabled={values.text === ''} onClick={onSubmitPost} className={classes.submit}>POST</Button>
-            </CardActions>
+                <CardContent className={classes.cardContent}>
+                    <TextField
+                        placeholder="Share your thoughts ..."
+                        multiline
+                        rows="3"
+                        value={values.text}
+                        onChange={handleChange('text')}
+                        className={classes.textField}
+                        margin="normal"
+                    />
+                    <input
+                        accept="image/*"
+                        onChange={handleChange('photo')}
+                        className={classes.input}
+                        id="icon-button-file"
+                        type="file"
+                    />
+                    <label htmlFor="icon-button-file">
+                        <IconButton color="secondary" className={classes.photoButton} component="span">
+                            <PhotoCamera />
+                        </IconButton>
+                    </label> <span className={classes.filename}>{values.photo ? values.photo['name'] : ''}</span>
+                    { values.error && (
+                        <Typography component="p" color="error">
+                            <Icon color="error">error</Icon>
+                            {values.error}
+                        </Typography>
+                    )}
+                </CardContent>
+                <CardActions>
+                    <Button
+                        color="primary"
+                        variant="contained"
+                        disabled={values.text === ''}
+                        onClick={onSubmitPost}
+                        className={classes.submit}
+                    >
+                        Submit
+                    </Button>
+                </CardActions>
             </Card>
         </div>
     )

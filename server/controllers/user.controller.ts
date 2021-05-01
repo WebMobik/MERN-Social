@@ -161,7 +161,7 @@ const removeFollowing = async (req: IRequest<Unfollow>, res: Response, next: Nex
 
 const removeFollower = async (req: IRequest<Unfollow>, res: Response) => {
   try {
-    const res: any = await UserModel.findByIdAndUpdate(
+    const updatedUser: any = await UserModel.findByIdAndUpdate(
       req.body.unfollowId,
       { $pull: { followers: req.body.userId } },
       { new: true }
@@ -169,9 +169,9 @@ const removeFollower = async (req: IRequest<Unfollow>, res: Response) => {
       .populate('following', '_id name')
       .populate('followers', '_id name')
       .exec()
-    res.hashed_password = undefined
-    res.salt = undefined
-    res.json(res)
+    updatedUser.hashed_password = undefined
+    updatedUser.salt = undefined
+    res.json(updatedUser)
   } catch (err) {
     return res.status(400).json({
       error: errorHandler.getErrorMessage(err),
@@ -183,9 +183,9 @@ const findPeople = async (req: IRequest, res: Response<UserSchemaDoc[] | ErrorRe
   const following = req.profile.following
   following.push(req.profile._id)
   try {
-    const users = await UserModel.find({ _id: { $nin: following } }).select(
-      'name'
-    )
+    const users = await UserModel
+      .find({ _id: { $nin: following } })
+      .select('name')
     res.json(users)
   } catch (err) {
     return res.status(400).json({

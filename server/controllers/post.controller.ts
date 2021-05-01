@@ -1,5 +1,5 @@
 import { NextFunction, Response } from 'express'
-import { LeanDocument } from 'mongoose'
+import { LeanDocument, ObjectId } from 'mongoose'
 import formidable from 'formidable'
 import fs from 'fs'
 import { IncomingMessage } from 'http'
@@ -172,7 +172,7 @@ const uncomment = async (req: IRequest<PostComment>, res: Response<PostSchemaDoc
 }
 
 const isPoster = (req: IRequest, res: Response, next: NextFunction) => {
-  const isPoster = req.post && req.post.postedBy === req.auth._id
+  const isPoster = req.post && (req.post.postedBy as {_id: ObjectId})._id == req.auth._id
   if (!isPoster) {
     return res.status(403).json({
       error: 'User is not authorized',
