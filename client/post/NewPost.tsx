@@ -1,4 +1,4 @@
-import React, { ChangeEvent, ChangeEventHandler, useEffect, useState } from 'react'
+import React, { ChangeEvent, useEffect, useState } from 'react'
 import { Avatar, Button, Card, CardActions, CardContent, CardHeader, Icon, IconButton, makeStyles, TextField, Typography } from '@material-ui/core';
 import auth from '../auth/auth-helper';
 import { create } from './post-api';
@@ -130,7 +130,10 @@ const NewPost: React.FC = () => { // { addUpdate }
                         <IconButton color="secondary" className={classes.photoButton} component="span">
                             <PhotoCamera />
                         </IconButton>
-                    </label> <span className={classes.filename}>{values.photo ? values.photo['name'] : ''}</span>
+                    </label>
+                    <span className={classes.filename}>
+                        {values.photo ? values.photo['name'] : ''}
+                    </span>
                     { values.error && (
                         <Typography component="p" color="error">
                             <Icon color="error">error</Icon>

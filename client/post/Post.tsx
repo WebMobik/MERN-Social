@@ -1,5 +1,9 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom';
+import { like, remove, unlike } from './post-api';
+import auth from '../auth/auth-helper';
+import Comments from './Comments';
+import { PostSchemaDoc, ErrorRes } from '../../server/types';
 import {
     Avatar,
     Card,
@@ -15,10 +19,6 @@ import DeleteIcon from '@material-ui/icons/Delete'
 import FavoriteIcon from '@material-ui/icons/Favorite'
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder'
 import CommentIcon from '@material-ui/icons/Comment'
-import { like, remove, unlike } from './post-api';
-import auth from '../auth/auth-helper';
-import Comments from './Comments';
-import { PostSchemaDoc, ErrorRes } from '../../server/types';
 
 const useStyles = makeStyles(theme => ({
     card: {
@@ -107,7 +107,7 @@ const Post: React.FC<{ post: PostSchemaDoc, onRemove: (post: PostSchemaDoc) => v
                         </IconButton>
                     )
                 }
-                // title={<Link to={"/user/"+post.postedBy}>{post.postedBy.name}</Link>} // TODO: разобрать postedBy и вытащить имя пользователя создавшего пост
+                title={<Link to={"/user/"+post.postedBy}>{(post.postedBy as { name: string }).name}</Link>}
                 subheader={(new Date(post.created).toDateString())}
                 className={classes.cardHeader}
             />

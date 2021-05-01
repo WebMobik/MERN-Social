@@ -2,9 +2,9 @@ import React, { useState } from 'react'
 import { create } from './api-user'
 import { Link } from 'react-router-dom'
 import {
+  Avatar,
   Button,
   Card,
-  CardActions,
   CardContent,
   Dialog,
   DialogActions,
@@ -16,6 +16,7 @@ import {
   TextField,
   Typography,
 } from '@material-ui/core'
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import useStyles from '../styles/stylesForm'
 
 const SignUp: React.FC = () => {
@@ -52,30 +53,51 @@ const SignUp: React.FC = () => {
     <>
       <Card className={styles.card}>
         <CardContent>
-          <form onSubmit={handlerSubmit} className={styles.form}>
-            <Typography className={styles.titleText}>Sign Up</Typography>
+        <Avatar className={styles.avatar}>
+          <LockOutlinedIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5" className={styles.titleText}>
+          Sign Up
+        </Typography>
+          <form className={styles.form} onSubmit={handlerSubmit} >
             <TextField
-              id="name"
-              label="Name"
-              value={values.name}
-              onChange={handlerChange('name')}
-              margin="normal"
-            />
-            <TextField
-              id="email"
-              type="email"
-              label="Email"
-              value={values.email}
               onChange={handlerChange('email')}
+              value={values.email}
+              variant="outlined"
               margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="Email Address"
+              name="email"
+              autoComplete="email"
+              autoFocus
             />
             <TextField
-              id="password"
-              type="password"
-              label="Password"
-              value={values.password}
-              onChange={handlerChange('password')}
+              onChange={handlerChange('name')}
+              value={values.name}
+              variant="outlined"
               margin="normal"
+              required
+              fullWidth
+              name="name"
+              label="Name"
+              type="text"
+              id="name"
+              autoComplete="current-name"
+            />
+            <TextField
+              onChange={handlerChange('password')}
+              value={values.password}
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Password"
+              type="password"
+              id="password"
+              autoComplete="current-password"
             />
             <Divider />
             {values.error && (
@@ -84,15 +106,15 @@ const SignUp: React.FC = () => {
                 {values.error}
               </Typography>
             )}
-            <CardActions>
-              <Button
-                variant="contained"
-                type="submit"
-                className={styles.btnSuccess}
-              >
-                Submit
-              </Button>
-            </CardActions>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={styles.submit}
+            >
+              Sign Up
+            </Button>
           </form>
         </CardContent>
       </Card>
@@ -106,7 +128,7 @@ const SignUp: React.FC = () => {
         <DialogActions>
           <Link to="signin">
             <Button color="primary" variant="contained">
-              Sign In
+              Sign Up
             </Button>
           </Link>
         </DialogActions>

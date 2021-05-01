@@ -1,7 +1,6 @@
 import {
   Button,
   Card,
-  CardActions,
   CardContent,
   Dialog,
   DialogActions,
@@ -78,27 +77,43 @@ const EditProfile = ({ match }) => {
           <form onSubmit={handlerSubmit} className={styles.form}>
             <Typography className={styles.titleText}>Edit Profile</Typography>
             <TextField
-              id="name"
-              label="Name"
-              value={values.name}
-              onChange={handlerChange('name')}
-              margin="normal"
-            />
-            <TextField
-              id="email"
-              type="email"
-              label="Email"
-              value={values.email}
               onChange={handlerChange('email')}
+              value={values.email}
+              variant="outlined"
               margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="Email Address"
+              name="email"
+              autoComplete="email"
+              autoFocus
             />
             <TextField
-              id="password"
-              type="password"
-              label="Password"
-              value={values.password}
-              onChange={handlerChange('password')}
+              onChange={handlerChange('name')}
+              value={values.name}
+              variant="outlined"
               margin="normal"
+              required
+              fullWidth
+              name="name"
+              label="Name"
+              type="text"
+              id="name"
+              autoComplete="current-name"
+            />
+            <TextField
+              onChange={handlerChange('password')}
+              value={values.password}
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Password"
+              type="password"
+              id="password"
+              autoComplete="current-password"
             />
             <Divider />
             {values.error && (
@@ -107,15 +122,13 @@ const EditProfile = ({ match }) => {
                 {values.error}
               </Typography>
             )}
-            <CardActions>
-              <Button
-                variant="contained"
-                type="submit"
-                className={styles.btnSuccess}
-              >
-                Submit
-              </Button>
-            </CardActions>
+            <Button
+              variant="contained"
+              type="submit"
+              className={styles.btnSuccess}
+            >
+              Submit
+            </Button>
           </form>
         </CardContent>
       </Card>

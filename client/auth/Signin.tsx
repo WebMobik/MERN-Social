@@ -3,13 +3,14 @@ import { Redirect } from 'react-router-dom'
 import auth from './auth-helper'
 import { signin } from './api-auth'
 import {
+  Avatar,
   Button,
   Card,
-  CardActions,
   CardContent,
   TextField,
   Typography,
 } from '@material-ui/core'
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import useStyles from '../styles/stylesForm'
 
 const SignIn: React.FC = () => {
@@ -46,36 +47,48 @@ const SignIn: React.FC = () => {
   return !values.redirectToRefresh ? (
     <Card className={styles.card}>
       <CardContent>
-        <Typography className={styles.titleText}>Sign In</Typography>
-        <form onSubmit={handlerSubmit} className={styles.form}>
+        <Avatar className={styles.avatar}>
+          <LockOutlinedIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5" className={styles.titleText}>
+          Sign in
+        </Typography>
+        <form className={styles.form} onSubmit={handlerSubmit} >
           <TextField
-            id="email"
-            type="email"
-            label="Email"
-            value={values.email}
             onChange={handlerChange('email')}
-            placeholder="Email"
+            value={values.email}
+            variant="outlined"
             margin="normal"
+            required
+            fullWidth
+            id="email"
+            label="Email Address"
+            name="email"
+            autoComplete="email"
+            autoFocus
           />
           <TextField
-            id="password"
-            type="password"
-            label="Password"
-            value={values.password}
             onChange={handlerChange('password')}
-            placeholder="Password"
+            value={values.password}
+            variant="outlined"
             margin="normal"
+            required
+            fullWidth
+            name="password"
+            label="Password"
+            type="password"
+            id="password"
+            autoComplete="current-password"
           />
-          <CardActions>
-            <Button
-              variant="contained"
-              color="primary"
-              type="submit"
-              className={styles.btnSuccess}
-            >
-              Submit
-            </Button>
-          </CardActions>
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            className={styles.submit}
+          >
+            Sign In
+          </Button>
         </form>
       </CardContent>
     </Card>

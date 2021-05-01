@@ -12,6 +12,13 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     alignItems: 'center',
   },
+  avatar: {
+    margin: '0 auto',
+    backgroundColor: theme.palette.secondary.main,
+  },
+  submit: {
+    margin: theme.spacing(3, 0, 2),
+  },
   titleText: {
     textAlign: 'center',
     textTransform: 'uppercase',
