@@ -1,3 +1,7 @@
+import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
+import { update, read } from '../api/user'
+import auth from '../auth/auth-helper'
 import {
   Button,
   Card,
@@ -9,14 +13,12 @@ import {
   DialogTitle,
   Divider,
   Icon,
+  IconButton,
   TextField,
   Typography,
 } from '@material-ui/core'
-import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
-import { update, read } from './api-user'
-import auth from '../auth/auth-helper'
 import useStyles from '../styles/stylesForm'
+import { PhotoCamera } from '@material-ui/icons'
 
 const EditProfile = ({ match }) => {
   const styles = useStyles()
@@ -25,6 +27,7 @@ const EditProfile = ({ match }) => {
     name: '',
     email: '',
     password: '',
+    photo: '',
     error: null,
     open: false,
   })
@@ -48,12 +51,13 @@ const EditProfile = ({ match }) => {
     }
   }, [match.params.userId])
 
-  const handlerSubmit = (e) => {
+  const handlerSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const user = {
-      name: values.name || undefined,
-      email: values.email || undefined,
-      password: values.password || undefined,
+      name: values.name,
+      email: values.email,
+      password: values.password,
+      photo: values.photo
     }
     update({ userId: match.params.userId }, { t: jwt.token }, user).then(
       (data) => {
@@ -66,8 +70,13 @@ const EditProfile = ({ match }) => {
     )
   }
 
-  const handlerChange = (name) => (event) => {
-    setValues({ ...values, [name]: event.target.value })
+  const handleChange = (name: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    setValues({
+      ...values,
+      [name]: name === 'photo'
+        ? event.target.files[0]
+        : event.target.value
+    })
   }
 
   return (
@@ -77,7 +86,7 @@ const EditProfile = ({ match }) => {
           <form onSubmit={handlerSubmit} className={styles.form}>
             <Typography className={styles.titleText}>Edit Profile</Typography>
             <TextField
-              onChange={handlerChange('email')}
+              onChange={handleChange('email')}
               value={values.email}
               variant="outlined"
               margin="normal"
@@ -90,7 +99,7 @@ const EditProfile = ({ match }) => {
               autoFocus
             />
             <TextField
-              onChange={handlerChange('name')}
+              onChange={handleChange('name')}
               value={values.name}
               variant="outlined"
               margin="normal"
@@ -100,10 +109,9 @@ const EditProfile = ({ match }) => {
               label="Name"
               type="text"
               id="name"
-              autoComplete="current-name"
             />
             <TextField
-              onChange={handlerChange('password')}
+              onChange={handleChange('password')}
               value={values.password}
               variant="outlined"
               margin="normal"
@@ -113,8 +121,22 @@ const EditProfile = ({ match }) => {
               label="Password"
               type="password"
               id="password"
-              autoComplete="current-password"
             />
+            <input
+              accept="image/*"
+              onChange={handleChange('photo')}
+              className={styles.inputPhoto}
+              id="icon-button-file"
+              type="file"
+            />
+            <label htmlFor="icon-button-file">
+                <IconButton color="secondary" className={styles.photoButton} component="span">
+                    <PhotoCamera />
+                </IconButton>
+            </label>
+            <span className={styles.filename}>
+                {values.photo ? values.photo['name'] : ''}
+            </span>
             <Divider />
             {values.error && (
               <Typography component="p" color="error">

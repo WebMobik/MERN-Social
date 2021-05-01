@@ -1,11 +1,17 @@
-export const headersApi = (credentials?) => {
+import { credentialsT } from "./api/types"
+
+export const headersApi = (typeJson?: boolean, credentials?: credentialsT) => {
     const basicHeaders = {
         Accept: 'application/json',
-        'Content-Type': 'application/json',
     }
-  
-    if (credentials) {
-        return { ...basicHeaders, Authorization: 'Bearer ' + credentials.t }
+
+    switch(true) {
+        case typeJson:
+            basicHeaders['Content-Type'] = 'application/json'
+        case !!credentials:
+            basicHeaders['Authorization'] = 'Bearer ' + credentials?.t
+        default:
+            break
     }
   
     return basicHeaders

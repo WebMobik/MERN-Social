@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Redirect, Link } from 'react-router-dom'
 import auth from '../auth/auth-helper'
-import { read } from './api-user'
+import { read } from '../api/user'
 import {
   Avatar,
   Card,

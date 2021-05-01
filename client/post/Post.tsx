@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom';
-import { like, remove, unlike } from './post-api';
+import { like, remove, unlike } from '../api/post';
 import auth from '../auth/auth-helper';
 import Comments from './Comments';
 import { PostSchemaDoc, ErrorRes } from '../../server/types';
@@ -11,6 +11,7 @@ import {
     CardContent,
     CardHeader,
     Divider,
+    Grid,
     IconButton,
     makeStyles,
     Typography
@@ -19,6 +20,7 @@ import DeleteIcon from '@material-ui/icons/Delete'
 import FavoriteIcon from '@material-ui/icons/Favorite'
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder'
 import CommentIcon from '@material-ui/icons/Comment'
+import { ObjectId } from 'mongoose';
 
 const useStyles = makeStyles(theme => ({
     card: {
@@ -54,7 +56,7 @@ const useStyles = makeStyles(theme => ({
 const Post: React.FC<{ post: PostSchemaDoc, onRemove: (post: PostSchemaDoc) => void }> = ({ post, onRemove }) => {
     const classes = useStyles()
     const jwt = auth.isAuthenticated()
-    const checkLike = (likes) => likes.indexOf(jwt.user._id) !== -1
+    const checkLike = (likes: ObjectId[]) => likes.indexOf(jwt.user._id) !== -1
     const [values, setValues] = useState({
         like: checkLike(post.likes),
         likes: post.likes.length,
@@ -95,53 +97,55 @@ const Post: React.FC<{ post: PostSchemaDoc, onRemove: (post: PostSchemaDoc) => v
     }
 
     return (
-        <Card>
-            <CardHeader
-                avatar={
-                    <Avatar src={'/api/users/photo'+post.postedBy} />
-                }
-                action={
-                    post.postedBy === auth.isAuthenticated().user._id && (
-                        <IconButton onClick={deletePost}>
-                            <DeleteIcon />
+        <Grid item xs={12} md={6}>
+            <Card className={classes.card}>
+                <CardHeader
+                    avatar={
+                        <Avatar src={'/api/users/photo'+post.postedBy} />
+                    }
+                    action={
+                        post.postedBy === auth.isAuthenticated().user._id && (
+                            <IconButton onClick={deletePost}>
+                                <DeleteIcon />
+                            </IconButton>
+                        )
+                    }
+                    title={<Link to={"/user/"+post.postedBy}>{(post.postedBy as { name: string }).name}</Link>}
+                    subheader={(new Date(post.created).toDateString())}
+                    className={classes.cardHeader}
+                />
+                <CardContent>
+                    <Typography component="p" variant="subtitle1" paragraph className={classes.text}>
+                        { post.text }
+                    </Typography>
+                    {post.photo && (
+                        <div className={classes.photo}>
+                            <img
+                                className={classes.media}
+                                src={'/api/posts/photo/'+post._id}
+                            />
+                        </div>
+                    )}
+                </CardContent>
+                <CardActions>
+                    {values.like ? (
+                        <IconButton onClick={clickLike} className={classes.button} aria-label="Like" color="secondary">
+                            <FavoriteIcon />
                         </IconButton>
-                    )
-                }
-                title={<Link to={"/user/"+post.postedBy}>{(post.postedBy as { name: string }).name}</Link>}
-                subheader={(new Date(post.created).toDateString())}
-                className={classes.cardHeader}
-            />
-            <CardContent className={classes.cardContent}>
-                <Typography component="p" className={classes.text}>
-                    { post.text }
-                </Typography>
-                {post.photo && (
-                    <div className={classes.photo}>
-                        <img
-                            className={classes.media}
-                            src={'/api/posts/photo/'+post._id}
-                        />
-                    </div>
-                )}
-            </CardContent>
-            <CardActions>
-                {values.like ? (
-                    <IconButton onClick={clickLike} className={classes.button} aria-label="Like" color="secondary">
-                        <FavoriteIcon />
-                    </IconButton>
-                    ) : (
-                    <IconButton onClick={clickLike} className={classes.button} aria-label="Unlike" color="secondary">
-                        <FavoriteBorderIcon />
-                    </IconButton>
-                )}
-                <span>{values.likes}</span>
-                <IconButton className={classes.button} aria-label="Comment" color="secondary">
-                    <CommentIcon/>
-                </IconButton> <span>{values.comments.length}</span>
-            </CardActions>
-            <Divider/>
-            <Comments postId={post._id} comments={values.comments} updateComments={updateComments}/>
-        </Card>
+                        ) : (
+                        <IconButton onClick={clickLike} className={classes.button} aria-label="Unlike" color="secondary">
+                            <FavoriteBorderIcon />
+                        </IconButton>
+                    )}
+                    <span>{values.likes}</span>
+                    <IconButton className={classes.button} aria-label="Comment" color="secondary">
+                        <CommentIcon/>
+                    </IconButton> <span>{values.comments.length}</span>
+                </CardActions>
+                <Divider/>
+                <Comments postId={post._id} comments={values.comments} updateComments={updateComments}/>
+            </Card>
+        </Grid>
     )
 };
 

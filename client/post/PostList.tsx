@@ -1,15 +1,20 @@
 import React from 'react'
-import { Paper } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 import Post from './Post';
 import { PostSchemaDoc } from '../../server/types';
 
-const PostList: React.FC<{ posts: PostSchemaDoc[] }> = ({ posts }) => {
+type PostListProps = {
+    posts: PostSchemaDoc[],
+    removeUpdate: (post: PostSchemaDoc) => void
+}
+
+const PostList: React.FC<PostListProps> = ({ posts, removeUpdate }) => {
     return (
-        <Paper elevation={3}>
-            {posts.map((post, index) => (
+        <Grid container spacing={4}>
+            {posts.map((post: PostSchemaDoc, index: number) => (
                 <Post key={index} post={post} onRemove={() => ({})} />
             ))}
-        </Paper>
+        </Grid>
     )
 };
 

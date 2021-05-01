@@ -1,7 +1,7 @@
 import React, { ChangeEvent, MouseEventHandler, useState } from 'react'
 import { Redirect } from 'react-router-dom'
 import auth from './auth-helper'
-import { signin } from './api-auth'
+import { signin } from '../api/auth'
 import {
   Avatar,
   Button,
