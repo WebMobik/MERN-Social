@@ -1,25 +1,29 @@
+import { ObjectId } from "mongoose"
+
 type Follow = {_id: string, name: string}
 
 export type StateComponentT = {
-    error: string
+    error?: boolean | string
     loading?: boolean
-    open: boolean
+    open?: boolean
 }
 
 export type UserT = {
-    _id: string
+    _id: ObjectId
     created: string
     email: string
     name: string
     password: string
     about: string
-    following: boolean
+    following: Follow[]
     followers: Follow[]
+    isFollowing: boolean
 }
 
 export type PostT = {
+    _id: ObjectId
     text: string
-    likes: string[]
+    likes: ObjectId[]
     comments: {
         text: string
         created: Date

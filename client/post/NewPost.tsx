@@ -1,5 +1,16 @@
 import React, { ChangeEvent, useEffect, useState } from 'react'
-import { Avatar, Button, Card, CardActions, CardContent, CardHeader, Icon, IconButton, TextField, Typography } from '@material-ui/core';
+import {
+    Avatar,
+    Button,
+    Card,
+    CardActions,
+    CardContent,
+    CardHeader,
+    Icon,
+    IconButton,
+    TextField,
+    Typography
+} from '@material-ui/core';
 import auth from '../auth/auth-helper';
 import { create } from '../api/post';
 import { PhotoCamera } from '@material-ui/icons';
@@ -45,6 +56,7 @@ const NewPost: React.FC<NewPostProps> = ({ addUpdate }) => {
         const postData = new FormData()
         postData.append('text', values.text)
         postData.append('photo', values.photo)
+
         create({
             userId: jwt.user._id
         }, {

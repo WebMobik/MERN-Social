@@ -16,7 +16,9 @@ import { StateComponentT } from './types';
 
 const DeleteUser = ({ userId }) => {
     const history = useHistory()
-    const [state, setState] = useState<StateComponentT>()
+    const [state, setState] = useState<StateComponentT>({
+        open: false
+    })
     const jwt = auth.isAuthenticated()
 
     const handleDeleteUser = () => {

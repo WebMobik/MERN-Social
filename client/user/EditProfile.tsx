@@ -27,6 +27,7 @@ const EditProfile = ({ match }) => {
     name: '',
     email: '',
     password: '',
+    about: '',
     photo: '',
     error: null,
     open: false,
@@ -41,7 +42,7 @@ const EditProfile = ({ match }) => {
         if (data && data.error) {
           setValues({ ...values, error: data.error })
         } else {
-          setValues({ ...values, name: data.name, email: data.email })
+          setValues({ ...values, name: data.name, email: data.email, about: data.about })
         }
       }
     )
@@ -53,21 +54,21 @@ const EditProfile = ({ match }) => {
 
   const handlerSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    const user = {
-      name: values.name,
-      email: values.email,
-      password: values.password,
-      photo: values.photo
-    }
-    update({ userId: match.params.userId }, { t: jwt.token }, user).then(
-      (data) => {
+    const formSubmit = new FormData()
+    values.name && formSubmit.append('name', values.name)
+    values.email && formSubmit.append('email', values.email)
+    values.password && formSubmit.append('passoword', values.password)
+    values.about && formSubmit.append('about', values.about)
+    values.photo && formSubmit.append('photo', values.photo)
+
+    update({ userId: match.params.userId }, { t: jwt.token }, formSubmit)
+      .then(data => {
         if (data && data.error) {
           setValues({ ...values, error: data.error })
         } else {
           setValues({ ...values, open: true })
         }
-      }
-    )
+      })
   }
 
   const handleChange = (name: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -111,6 +112,19 @@ const EditProfile = ({ match }) => {
               id="name"
             />
             <TextField
+              onChange={handleChange('about')}
+              value={values.about}
+              variant="outlined"
+              multiline
+              fullWidth
+              rows="2"
+              name="about"
+              label="About"
+              type="text"
+              margin="normal"
+              id="multiline-flexible"
+            />
+            <TextField
               onChange={handleChange('password')}
               value={values.password}
               variant="outlined"
@@ -127,6 +141,7 @@ const EditProfile = ({ match }) => {
               onChange={handleChange('photo')}
               className={styles.inputPhoto}
               id="icon-button-file"
+              name="photo"
               type="file"
             />
             <label htmlFor="icon-button-file">
@@ -155,7 +170,7 @@ const EditProfile = ({ match }) => {
         </CardContent>
       </Card>
       <Dialog open={values.open} disableBackdropClick={true}>
-        <DialogTitle>Edite Profile</DialogTitle>
+        <DialogTitle>Edit Profile</DialogTitle>
         <DialogContent>
           <DialogContentText>Profile successfully edited.</DialogContentText>
         </DialogContent>

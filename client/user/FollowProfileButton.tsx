@@ -4,8 +4,8 @@ import { Button } from '@material-ui/core';
 
 const FollowProfileButton = ({following, onButtonClick}) => {
     
-    const handleFollowUnFollow = () => {
-        onButtonClick(following ? unfollow : follow)
+    const handleFollowUnfollow = () => {
+        onButtonClick(following ? follow : unfollow)
     }
 
     return (
@@ -14,16 +14,16 @@ const FollowProfileButton = ({following, onButtonClick}) => {
                 ? (<Button
                     variant="contained"
                     color="secondary"
-                    onClick={handleFollowUnFollow}
+                    onClick={handleFollowUnfollow}
                     >
-                        Unfollow
+                        Follow
                     </Button>)
                 : (<Button
                     variant="contained"
                     color="primary"
-                    onClick={handleFollowUnFollow}
+                    onClick={handleFollowUnfollow}
                     >
-                        Follow
+                        Unfollow
                     </Button>)
             }
         </div>

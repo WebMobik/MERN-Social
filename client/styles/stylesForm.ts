@@ -60,13 +60,20 @@ const useStyles = makeStyles((theme) => ({
     verticalAlign: 'super'
   },
   loader: {
-    margin: '0 auto'
+    height: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   bigAvatar: {
     width: 60,
     height: 60,
     margin: 10
-  }
+  },
+  gridList: {
+    width: 500,
+    height: 220,
+  },
 }))
 
 export default useStyles

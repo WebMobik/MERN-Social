@@ -1,10 +1,11 @@
 import React from 'react'
-import { PostSchemaDoc } from '../../server/types';
+import { ObjectId } from 'mongoose';
+import { PostT } from '../user/types';
 
 type CommentsProps = {
-    postId: string,
-    comments: PostSchemaDoc['comments'],
-    updateComments: (comments: PostSchemaDoc['comments']) => void
+    postId: ObjectId,
+    comments: PostT['comments'],
+    updateComments: (comments: PostT['comments']) => void
 }
 
 const Comments: React.FC<CommentsProps> = () => {

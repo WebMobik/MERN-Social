@@ -1,9 +1,8 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom';
-import { like, remove, unlike } from '../api/post';
-import auth from '../auth/auth-helper';
-import Comments from './Comments';
-import { PostSchemaDoc, ErrorRes } from '../../server/types';
+import { Link } from 'react-router-dom'
+import { like, remove, unlike } from '../api/post'
+import Comments from './Comments'
+import auth from '../auth/auth-helper'
 import {
     Avatar,
     Card,
@@ -20,7 +19,8 @@ import DeleteIcon from '@material-ui/icons/Delete'
 import FavoriteIcon from '@material-ui/icons/Favorite'
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder'
 import CommentIcon from '@material-ui/icons/Comment'
-import { ObjectId } from 'mongoose';
+import { ObjectId } from 'mongoose'
+import { PostT } from '../user/types'
 
 const useStyles = makeStyles(theme => ({
     card: {
@@ -53,7 +53,12 @@ const useStyles = makeStyles(theme => ({
     }
 }))
 
-const Post: React.FC<{ post: PostSchemaDoc, onRemove: (post: PostSchemaDoc) => void }> = ({ post, onRemove }) => {
+type PostProps = {
+    post: PostT
+    onRemove: (post: PostT) => void
+}
+
+const Post: React.FC<PostProps> = ({ post, onRemove }) => {
     const classes = useStyles()
     const jwt = auth.isAuthenticated()
     const checkLike = (likes: ObjectId[]) => likes.indexOf(jwt.user._id) !== -1
@@ -69,11 +74,11 @@ const Post: React.FC<{ post: PostSchemaDoc, onRemove: (post: PostSchemaDoc) => v
             { userId: jwt.user._id },
             { t: jwt.token },
             post._id
-        ).then((data: PostSchemaDoc | ErrorRes) => {
-            if ((data as ErrorRes).error) {
-                console.log((data as ErrorRes).error)
+        ).then(data => {
+            if (data.error) {
+                console.log(data.error)
             } else {
-                setValues({...values, like: !values.like, likes: (data as PostSchemaDoc).likes.length})
+                setValues({...values, like: !values.like, likes: (data as PostT).likes.length})
             }
         })
     }
@@ -87,9 +92,9 @@ const Post: React.FC<{ post: PostSchemaDoc, onRemove: (post: PostSchemaDoc) => v
             postId: post._id
         }, {
             t: jwt.token
-        }).then((data: PostSchemaDoc | ErrorRes) => {
-            if ((data as ErrorRes).error) {
-                console.log((data as ErrorRes).error)
+        }).then(data => {
+            if (data.error) {
+                console.log(data.error)
             } else {
                 onRemove(post)
             }
@@ -101,7 +106,7 @@ const Post: React.FC<{ post: PostSchemaDoc, onRemove: (post: PostSchemaDoc) => v
             <Card className={classes.card}>
                 <CardHeader
                     avatar={
-                        <Avatar src={'/api/users/photo'+post.postedBy} />
+                        <Avatar src={'/api/users/photo/'+post.postedBy._id} />
                     }
                     action={
                         post.postedBy === auth.isAuthenticated().user._id && (

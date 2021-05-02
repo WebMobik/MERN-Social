@@ -1,18 +1,18 @@
 import React from 'react'
 import { Grid } from '@material-ui/core';
 import Post from './Post';
-import { PostSchemaDoc } from '../../server/types';
+import { PostT } from '../user/types';
 
 type PostListProps = {
-    posts: PostSchemaDoc[],
-    removeUpdate: (post: PostSchemaDoc) => void
+    posts: PostT[],
+    removeUpdate: (post: PostT) => void
 }
 
-const PostList: React.FC<PostListProps> = ({ posts, removeUpdate }) => {
+const PostList: React.FC<PostListProps> = ({ posts = [], removeUpdate }) => {
     return (
         <Grid container spacing={4}>
-            {posts.map((post: PostSchemaDoc, index: number) => (
-                <Post key={index} post={post} onRemove={() => ({})} />
+            {posts.map((post: PostT, index: number) => (
+                <Post key={index} post={post} onRemove={removeUpdate} />
             ))}
         </Grid>
     )

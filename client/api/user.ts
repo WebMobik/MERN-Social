@@ -21,11 +21,11 @@ const list = async (signal: AbortSignal) => {
   return response
 }
 
-const update = async (params, credentials, user) => {
+const update = async (params, credentials, formSubmit: FormData) => {
   const response = await api.put(
     '/api/users/' + params.userId,
-    headersApi(true, credentials),
-    JSON.stringify(user)
+    headersApi(false, credentials),
+    formSubmit
   )
   return response
 }

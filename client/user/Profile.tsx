@@ -21,10 +21,14 @@ import { Edit } from '@material-ui/icons'
 import useStyles from '../styles/stylesForm'
 import { StateComponentT, UserT, PostT, DataT } from './types'
 import ProfileTabs from './ProfileTabs'
+import Loader from '../components/Loader'
 
 const Profile = ({ match }) => {
   const styles = useStyles()
-  const [state, setState] = useState<StateComponentT>()
+  const [state, setState] = useState<StateComponentT>({
+    error: false,
+    loading: true
+  })
   const [user, setUser] = useState<UserT>()
   const [posts, setPosts] = useState<PostT[]>()
   const [redirectToSignin, setRedirectToSignin] = useState(false)
@@ -34,18 +38,16 @@ const Profile = ({ match }) => {
     const abortController = new AbortController()
     const signal = abortController.signal
 
-    read(
-      { userId: match.params.userId },
-      { t: jwt.token },
-      signal
-      ).then((data: DataT) => {
+    read({ userId: match.params.userId }, { t: jwt.token }, signal)
+      .then((data: DataT) => {
         if (data && data.error) {
           setRedirectToSignin(true)
+          setState({...state, loading: false, error: true})
         } else {
-          const following = checkFollow(data)
-          setUser({...user, ...data, following: following})
+          const following = checkFollow(data) // TODO: разобрать получение _id, name followers and following пользователей через ссылку на модель в БД
+          setUser({...data, isFollowing: following})
           loadPosts(data._id)
-          setUser(data)
+          setState({...state, loading: false})
         }
       })
 
@@ -70,7 +72,7 @@ const Profile = ({ match }) => {
       if (data.error) {
         setState({...state, error: data.error})
       } else {
-        setUser({...user, ...data, following: !user.following})
+        setUser({...user, ...data, isFollowing: !user.isFollowing})
       }
     })
   }
@@ -89,20 +91,22 @@ const Profile = ({ match }) => {
   }
 
   const removePost = (post: PostT) => {
-    const updatedPosts = posts
-    const index = updatedPosts.indexOf(post)
-    updatedPosts.splice(index, 1)
+    const updatedPosts = posts.filter(postState => postState._id !== post._id)
     setPosts(updatedPosts)
   }
 
-  const photoUrl = user._id
+  const photoUrl = user?._id
     ? `/api/users/photo/${user._id}?${new Date().getTime()}`
     : '/api/users/defaultphoto'
 
-    if (redirectToSignin) {
-      return <Redirect to='/signin'/>
-    }
-    return (
+  if (redirectToSignin) {
+    return <Redirect to='/signin'/>
+  }
+
+  return (
+    state.loading ? (
+      <Loader />
+    ) : (
       <Paper className={styles.root} elevation={4}>
         <Typography variant="h6" className={styles.titleText}>
           Profile
@@ -113,8 +117,8 @@ const Profile = ({ match }) => {
               <Avatar src={photoUrl} className={styles.bigAvatar}/>
             </ListItemAvatar>
             <ListItemText primary={user.name} secondary={user.email}/> {
-             jwt.user && jwt.user._id == user._id
-             ? (<ListItemSecondaryAction>
+              jwt.user && jwt.user._id == user._id
+              ? (<ListItemSecondaryAction>
                   <Link to={"/user/edit/" + user._id}>
                     <IconButton aria-label="Edit" color="primary">
                       <Edit/>
@@ -122,18 +126,19 @@ const Profile = ({ match }) => {
                   </Link>
                   <DeleteUser userId={user._id}/>
                 </ListItemSecondaryAction>)
-            : (<FollowProfileButton following={user.following} onButtonClick={clickFollowButton}/>)
+            : (<FollowProfileButton following={user.isFollowing} onButtonClick={clickFollowButton}/>)
             }
           </ListItem>
           <Divider/>
           <ListItem>
-            <ListItemText primary={user.about} secondary={"Joined: " + (
+            <ListItemText  primary={user.about} secondary={"Joined: " + (
               new Date(user.created)).toDateString()}/>
           </ListItem>
         </List>
         <ProfileTabs user={user} posts={posts} removePostUpdate={removePost}/>
       </Paper>
     )
+  )
 }
 
 export default Profile
