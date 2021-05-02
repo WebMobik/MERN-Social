@@ -21,11 +21,10 @@ const photo = async (params, credentials, signal: AbortSignal) => {
     return response
 }
 
-const listByUser = async (params, credentials, signal: AbortSignal) => {
+const listByUser = async (params, credentials) => {
     const response = await api.get(
         '/api/posts/by/' + params.userId,
-        headersApi(true, credentials),
-        signal
+        headersApi(true, credentials)
     )
     return response
 }

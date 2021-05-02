@@ -15,7 +15,7 @@ const signin = async (user) => {
 const signout = async () => {
     const response = await api.get(
         '/auth/signout/',
-        headersApi(true),
+        headersApi(true)
     )
     return response
 }

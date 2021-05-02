@@ -61,6 +61,11 @@ const useStyles = makeStyles((theme) => ({
   },
   loader: {
     margin: '0 auto'
+  },
+  bigAvatar: {
+    width: 60,
+    height: 60,
+    margin: 10
   }
 }))
 
