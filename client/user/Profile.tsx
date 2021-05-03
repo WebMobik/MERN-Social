@@ -18,10 +18,10 @@ import {
   Typography,
 } from '@material-ui/core'
 import { Edit } from '@material-ui/icons'
-import useStyles from '../styles/stylesForm'
-import { StateComponentT, UserT, PostT, DataT } from './types'
 import ProfileTabs from './ProfileTabs'
 import Loader from '../components/Loader'
+import useStyles from '../styles/stylesForm'
+import { StateComponentT, UserT, PostT, DataT } from './types'
 
 const Profile = ({ match }) => {
   const styles = useStyles()
@@ -44,7 +44,8 @@ const Profile = ({ match }) => {
           setRedirectToSignin(true)
           setState({...state, loading: false, error: true})
         } else {
-          const following = checkFollow(data) // TODO: разобрать получение _id, name followers and following пользователей через ссылку на модель в БД
+          console.log(data);
+          const following = checkFollow(data)
           setUser({...data, isFollowing: following})
           loadPosts(data._id)
           setState({...state, loading: false})
@@ -58,7 +59,7 @@ const Profile = ({ match }) => {
 
   const checkFollow = (user: UserT) => {
     const match = user.followers.some((follower)=> {
-      return follower._id == jwt.user._id
+      return follower._id === jwt.user._id
     })
     return match
   }

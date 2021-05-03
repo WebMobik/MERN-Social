@@ -14,7 +14,6 @@ const useStyles = makeStyles((theme) => ({
   },
   avatar: {
     margin: '0 auto',
-    backgroundColor: theme.palette.secondary.main,
   },
   submit: {
     marginLeft: 'auto',
@@ -47,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: 5
   },
   inputPhoto: {
-    display: 'none',
+    display: 'none'
   },
   textField: {
     marginLeft: theme.spacing(2),
@@ -60,20 +59,52 @@ const useStyles = makeStyles((theme) => ({
     verticalAlign: 'super'
   },
   loader: {
-    height: '100%',
+    height: '300px',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center'
   },
+  // follow
   bigAvatar: {
     width: 60,
     height: 60,
     margin: 10
   },
-  gridList: {
-    width: 500,
-    height: 220,
+  follow: {
+    display: 'flex',
+    alignItems: 'center'
   },
+  // comments
+  smallAvatar: {
+    width: 25,
+    height: 25
+  },
+  comment: {
+    display: 'flex',
+    alignItems: 'center'
+  },
+  commentBtn: {
+    marginLeft: '10px',
+    height: '45px'
+  },
+  commentField: {
+    width: '96%'
+  },
+  commentText: {
+    backgroundColor: 'white',
+    padding: theme.spacing(1),
+    margin: `2px ${theme.spacing(2)}px 2px 2px`
+  },
+  commentDate: {
+    display: 'block',
+    color: 'gray',
+    fontSize: '0.8em'
+ },
+ commentDelete: {
+   fontSize: '1.6em',
+   verticalAlign: 'middle',
+   cursor: 'pointer'
+ }
 }))
 
 export default useStyles

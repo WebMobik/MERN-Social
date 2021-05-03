@@ -65,11 +65,11 @@ const comment = async (params, credentials, postId, comment) => {
     return response
 }
 
-const uncomment = async (credentials, postId, comment) => {
+const uncomment = async (params, credentials, postId, uncomment) => {
     const response = await api.put(
         '/api/posts/uncomment',
         headersApi(true, credentials),
-        JSON.stringify({postId, comment})
+        JSON.stringify({userId: params.userId, postId, uncomment})
     )
     return response
 }

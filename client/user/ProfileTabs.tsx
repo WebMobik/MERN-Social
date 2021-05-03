@@ -33,8 +33,8 @@ const ProfileTabs: React.FC<ProfileTabsProps> = ({user, posts, removePostUpdate}
                     </TabList>
                 </AppBar>
                 <TabPanel value="1"><PostList removeUpdate={removePostUpdate} posts={posts} /></TabPanel>
-                <TabPanel value="2"><FollowGrid people={user.following} /></TabPanel>
-                <TabPanel value="3"><FollowGrid people={user.followers} /></TabPanel>
+                <TabPanel value="2"><FollowGrid users={user.following} /></TabPanel>
+                <TabPanel value="3"><FollowGrid users={user.followers} /></TabPanel>
             </TabContext>
         </div>
     )

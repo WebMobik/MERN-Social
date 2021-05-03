@@ -2,21 +2,23 @@ import React, {useState, useEffect} from 'react'
 import {Link} from 'react-router-dom'
 import {findPeople, follow} from '../api/user'
 import auth from './../auth/auth-helper'
-import Paper from '@material-ui/core/Paper'
-import List from '@material-ui/core/List'
-import ListItem from '@material-ui/core/ListItem'
-import ListItemAvatar from '@material-ui/core/ListItemAvatar'
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction' 
-import ListItemText from '@material-ui/core/ListItemText' 
-import Avatar from '@material-ui/core/Avatar'
-import Button from '@material-ui/core/Button'
-import IconButton from '@material-ui/core/IconButton'
-import Typography from '@material-ui/core/Typography'
-import Snackbar from '@material-ui/core/Snackbar'
+import {
+  Paper,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemSecondaryAction,
+  ListItemText,
+  Avatar,
+  Button,
+  IconButton,
+  Typography,
+  Snackbar
+} from '@material-ui/core'
 import ViewIcon from '@material-ui/icons/Visibility'
 import useStyles from '../styles/stylesForm'
 
-export default function FindPeople() {
+const FindPeople: React.FC = () => {
   const classes = useStyles()
   const [values, setValues] = useState({
     users: [],
@@ -45,6 +47,7 @@ export default function FindPeople() {
     }
 
   }, [])
+
   const clickFollow = (user, index) => {
     follow({
       userId: jwt.user._id
@@ -60,47 +63,57 @@ export default function FindPeople() {
       }
     })
   }
+
   const handleRequestClose = () => {
     setValues({...values, open: false })
   }
-    return (<div>
-        <Paper className={classes.root} elevation={4}>
-            <Typography className={classes.titleText}>
-                Who to follow
-            </Typography>
-            <List>
-            {values.users.map((item, i) => {
-                return <span key={i}>
-                    <ListItem>
-                        <ListItemAvatar className={classes.avatar}>
-                            <Avatar src={'/api/users/photo/'+item._id}/>
-                        </ListItemAvatar>
-                        <ListItemText primary={item.name}/>
-                        <ListItemSecondaryAction>
-                            <Link to={"/user/" + item._id}>
-                            <IconButton color="secondary">
-                                <ViewIcon/>
-                            </IconButton>
-                            </Link>
-                            <Button aria-label="Follow" variant="contained" color="primary" onClick={()=> {clickFollow(item, i)}}>
-                            Follow
-                            </Button>
-                        </ListItemSecondaryAction>
-                    </ListItem>
-                </span>
-                })
-            }
-            </List>
-        </Paper>
-        <Snackbar
-            anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'right',
-            }}
-            open={values.open}
-            onClose={handleRequestClose}
-            autoHideDuration={6000}
-            message={<span>{values.followMessage}</span>}
-        />
-    </div>)
+
+  return (
+    <div>
+      <Paper className={classes.root} elevation={4}>
+          <Typography className={classes.titleText}>
+              Who to follow
+          </Typography>
+          <List>
+          {values.users.map((item, i) => (
+            <span key={i}>
+                <ListItem>
+                  <ListItemAvatar className={classes.avatar}>
+                      <Avatar src={'/api/users/photo/'+item._id}/>
+                  </ListItemAvatar>
+                  <ListItemText primary={item.name}/>
+                  <ListItemSecondaryAction>
+                    <Link to={"/user/" + item._id}>
+                      <IconButton color="secondary">
+                        <ViewIcon/>
+                      </IconButton>
+                    </Link>
+                    <Button
+                      aria-label="Follow"
+                      variant="contained"
+                      color="primary"
+                      onClick={()=> {clickFollow(item, i)}}
+                    >
+                      Follow
+                    </Button>
+                  </ListItemSecondaryAction>
+                </ListItem>
+            </span>
+          ))}
+          </List>
+      </Paper>
+      <Snackbar
+          anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'right',
+          }}
+          open={values.open}
+          onClose={handleRequestClose}
+          autoHideDuration={6000}
+          message={<span>{values.followMessage}</span>}
+      />
+    </div>
+  )
 }
+
+export default FindPeople

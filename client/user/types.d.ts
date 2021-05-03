@@ -27,7 +27,10 @@ export type PostT = {
     comments: {
         text: string
         created: Date
-        postedBy: string
+        postedBy: {
+            _id: ObjectId
+            name: string
+        }
     }[]
     postedBy: {
         _id: string

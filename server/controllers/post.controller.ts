@@ -99,7 +99,7 @@ const remove = async (req: IRequest, res: Response<PostSchemaDoc | ErrorRes>) =>
 const photo = (req: IRequest, res: Response<Buffer>) => {
   const reqPhoto = req.post.photo
   res.set('Content-Type', reqPhoto.contentType)
-  return res.json(reqPhoto.data)
+  return res.send(reqPhoto.data)
 }
 
 const like = async (req: IRequest<PostLike>, res: Response<PostSchemaDoc | ErrorRes>) => {
@@ -153,11 +153,11 @@ const comment = async (req: IRequest<PostComment>, res: Response<PostSchemaDoc |
 }
 
 const uncomment = async (req: IRequest<PostComment>, res: Response<PostSchemaDoc | ErrorRes>) => {
-  const comment = req.body.comment
+  const uncomment = req.body.uncomment
   try {
     const result = await PostModel.findByIdAndUpdate(
       req.body.postId,
-      { $pull: { comments: { _id: comment._id } } as { comments: never } },
+      { $pull: { comments: { _id: uncomment._id } } as { comments: never } },
       { new: true }
     )
       .populate('comments.postedBy', '_id name')

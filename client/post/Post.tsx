@@ -20,7 +20,7 @@ import FavoriteIcon from '@material-ui/icons/Favorite'
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder'
 import CommentIcon from '@material-ui/icons/Comment'
 import { ObjectId } from 'mongoose'
-import { PostT } from '../user/types'
+import { PostT, StateComponentT } from '../user/types'
 
 const useStyles = makeStyles(theme => ({
     card: {
@@ -62,6 +62,11 @@ const Post: React.FC<PostProps> = ({ post, onRemove }) => {
     const classes = useStyles()
     const jwt = auth.isAuthenticated()
     const checkLike = (likes: ObjectId[]) => likes.indexOf(jwt.user._id) !== -1
+    const [state, setState] = useState<StateComponentT>({
+        open: false,
+        loading: true,
+        error: false
+    })
     const [values, setValues] = useState({
         like: checkLike(post.likes),
         likes: post.likes.length,
@@ -101,8 +106,12 @@ const Post: React.FC<PostProps> = ({ post, onRemove }) => {
         })
     }
 
+    const toggleShowComments = () => {
+        setState(prev => ({...prev, open: !prev.open}))
+    }
+
     return (
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12}>
             <Card className={classes.card}>
                 <CardHeader
                     avatar={
@@ -143,12 +152,17 @@ const Post: React.FC<PostProps> = ({ post, onRemove }) => {
                         </IconButton>
                     )}
                     <span>{values.likes}</span>
-                    <IconButton className={classes.button} aria-label="Comment" color="secondary">
+                    <IconButton
+                        className={classes.button}
+                        aria-label="Comment"
+                        color="secondary"
+                        onClick={toggleShowComments}
+                    >
                         <CommentIcon/>
                     </IconButton> <span>{values.comments.length}</span>
                 </CardActions>
                 <Divider/>
-                <Comments postId={post._id} comments={values.comments} updateComments={updateComments}/>
+                {state.open && <Comments postId={post._id} comments={values.comments} updateComments={updateComments}/>}
             </Card>
         </Grid>
     )

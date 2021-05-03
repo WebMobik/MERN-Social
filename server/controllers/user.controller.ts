@@ -27,7 +27,11 @@ const create = async (req: IRequest<CreateUserReq>, res: Response) => {
 
 const userById = async (req: IRequest, res: Response, next: NextFunction, id: string) => {
   try {
-    const user = await UserModel.findById(id)
+    const user = await UserModel
+      .findById(id)
+      .populate('following', '_id name')
+      .populate('followers', '_id name')
+      .exec()
     if (!user) {
       return res.status(400).json({
         error: 'User not found',

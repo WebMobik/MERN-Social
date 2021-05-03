@@ -36,6 +36,7 @@ export type UserProfileComment = {
 
 export type PostComment = {
   comment: UserProfileComment | never
+  uncomment: UserProfileComment | never
   userId: ObjectId
   postId: ObjectId
 }

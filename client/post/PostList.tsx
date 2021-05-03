@@ -10,7 +10,7 @@ type PostListProps = {
 
 const PostList: React.FC<PostListProps> = ({ posts = [], removeUpdate }) => {
     return (
-        <Grid container spacing={4}>
+        <Grid container>
             {posts.map((post: PostT, index: number) => (
                 <Post key={index} post={post} onRemove={removeUpdate} />
             ))}

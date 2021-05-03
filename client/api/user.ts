@@ -5,8 +5,8 @@ const api = new API()
 
 const create = async (user) => {
   const response = await api.post(
-    '/api/users/',
-    headersApi(),
+    '/api/users',
+    headersApi(true),
     JSON.stringify(user)
   )
   return response
@@ -14,14 +14,14 @@ const create = async (user) => {
 
 const list = async (signal: AbortSignal) => {
   const response = await api.get(
-    '/api/users/',
+    '/api/users',
     headersApi(true),
     signal
   )
   return response
 }
 
-const update = async (params, credentials, formSubmit: FormData) => {
+const update = async (params: {userId: string}, credentials, formSubmit: FormData) => {
   const response = await api.put(
     '/api/users/' + params.userId,
     headersApi(false, credentials),
@@ -39,7 +39,7 @@ const read = async (params: {userId: string}, credentials, signal: AbortSignal) 
   return response
 }
 
-const remove = async (params, credentials) => {
+const remove = async (params: {userId: string}, credentials) => {
   const response = await api.delete(
     '/api/users/' + params.userId,
     headersApi(true, credentials)
