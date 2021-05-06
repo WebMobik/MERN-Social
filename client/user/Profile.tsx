@@ -44,7 +44,6 @@ const Profile = ({ match }) => {
           setRedirectToSignin(true)
           setState({...state, loading: false, error: true})
         } else {
-          console.log(data);
           const following = checkFollow(data)
           setUser({...data, isFollowing: following})
           loadPosts(data._id)

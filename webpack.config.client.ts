@@ -22,9 +22,10 @@ const config: webpack.Configuration = {
         rules: [
             {
                 test: /\.tsx?$/,
-                use: {
-                    loader: 'ts-loader',
-                },
+                loader: 'ts-loader',
+                // options: {
+                //     presets: ['@babel/preset-react', '@babel/preset-typescript']
+                // },
                 exclude: '/node_modules/'
             }
         ]
